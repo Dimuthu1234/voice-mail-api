@@ -18,5 +18,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/voice-mails-create', 'VoiceMailController@index')->name('voiceMailCreate');
-Route::get('/get-all-voice-mails', 'VoiceMailController@getAllVoiceMail')->name('getAllvoiceMail');
+Route::get('/create-voicemails', 'VoiceMailController@index')->name('voiceMailCreate');
+Route::get('/get-allvoicemails', 'VoiceMailController@getAllVoiceMail')->name('getAllvoiceMail');

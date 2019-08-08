@@ -43,7 +43,7 @@ class VoiceMailController extends Controller
         try {
             if (function_exists('imap_open')) {
                 $oClient = $this->voiceMailRepository->getClient();
-                $mbox = imap_open("{".env('IMAP_HOST', 'mail.iposg.net')."}INBOX", env('IMAP_USERNAME', 'dimuthu@iposg.com'), env('IMAP_PASSWORD', '123456'))
+                $mbox = imap_open("{".env('IMAP_HOST')."}INBOX", env('IMAP_USERNAME'), env('IMAP_PASSWORD'))
                 or die("Can't connect: " . imap_last_error());
                 $oClient->connect();
                 $aFolder = $oClient->getFolders();
@@ -61,7 +61,7 @@ class VoiceMailController extends Controller
                         } else {
                             $newTelno = 0;
                         }
-                        if ($from[0]->personal === "Dimuthu Jayalath") {
+                        if ($from[0]->personal === env('IMAP_EMAIL_RECEIVER', 'Dimuthu Jayalath')) {
                             $aAttachment = $oMessage->getAttachments();
 
                             foreach ($aAttachment as $oAttachment) {
@@ -69,9 +69,9 @@ class VoiceMailController extends Controller
                                     $fileName = 'attachment' . '-' . (string)rand(00000, 99999) . '.' . $oAttachment->getExtension();
                                     $oAttachment->save(public_path() . '/attachment', $fileName);
                                     $this->voiceMailRepository->storeVoiceMails($newTelno, $fileName, $date);
-                                    for ($x = 1; $x <= sizeof($aMessage); $x++) {
-                                        imap_delete($mbox, $x);
-                                    }
+//                                    for ($x = 1; $x <= sizeof($aMessage); $x++) {
+//                                        imap_delete($mbox, $x);
+//                                    }
                                 }
                             }
                         }
@@ -79,7 +79,6 @@ class VoiceMailController extends Controller
                     }
                 }
                 return response()->json(['success' => 'Voice Mails created Successfully'], 200);
-
             } else {
                 return response()->json(['error' => 'IMAP functions are not available.'], 404);
             }
